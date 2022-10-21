@@ -1,6 +1,16 @@
 name: Dev workflow
 
-on: [push]
+on:
+  push:
+    branches:
+       - main
+    paths: 
+       - 'environment/us-east-1/dev/**'
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  TF_VAR_AWS_ACCESS_KEY_ID:  ${{ secrets.AWS_ACCESS_KEY_ID }}
+  TF_VAR_AWS_SECRET_ACCESS_KEY:  ${{ secrets.AWS_SECRET_ACCESS }}
+  TF_VAR_AWS_REGION:  ${{ secrets.AWS_REGION }}
 
 jobs:
   example:
@@ -10,8 +20,28 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Setup Terragrunt
-        uses: autero1/action-terragrunt@v1.1.0
+        uses: autero1/action-terragrunt@v1.1.1
         with:
           terragrunt_version: 0.38.9
       - name: Interact with Terragrunt
-        run: terragrunt --version
+      - uses: actions/upload-artifact@v2
+        run: |
+          terragrunt --version
+          pwd
+          cd environment/us-east-1/dev
+          terragrunt run-all plan -out terragrunt_plan.out --terragrunt-include-external-dependencies
+          ls
+        with:
+          name: terragrunt_plan.out
+          path: ./terragrunt_plan.out
+      - name: Terragrunt Apply
+      - uses: actions/download-artifact@v2
+        with:
+          name: terragrunt_plan.out
+        run: |
+          terragrunt --version
+          ls
+          pwd
+          cd environment/us-east-1/dev
+          ls
+          terragrunt run-all apply terragrunt_plan.out --terragrunt-non-interactive
