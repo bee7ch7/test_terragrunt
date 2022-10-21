@@ -34,12 +34,8 @@ jobs:
 
       - name: Interact with Terragrunt
         run: |
-          terragrunt --version
-          pwd
           cd environment/us-east-1/dev
           terragrunt run-all plan --terragrunt-include-external-dependencies
-          ls
-          pwd
   apply:
       name: Dev Terragrunt Apply
       environment: dev
@@ -62,9 +58,29 @@ jobs:
 
       - name: Terragrunt Apply
         run: |
-          terragrunt --version
-          ls
-          pwd
           cd environment/us-east-1/dev
-          ls
           terragrunt run-all apply --terragrunt-non-interactive
+  destroy:
+      name: Dev Terragrunt Destroy
+      environment: dev
+      runs-on: ubuntu-latest
+      steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Setup Terragrunt
+        uses: autero1/action-terragrunt@v1.1.1
+        with:
+          terragrunt_version: 0.38.9
+
+      - name: Terragrunt Apply
+        run: |
+          cd environment/us-east-1/dev
+          terragrunt run-all destroy --terragrunt-non-interactive
