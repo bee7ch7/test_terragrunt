@@ -60,9 +60,10 @@ jobs:
         run: |
           cd environment/us-east-1/dev
           terragrunt run-all apply --terragrunt-non-interactive
+
   destroy:
       name: Dev Terragrunt Destroy
-      environment: dev
+      environment: dev_destroy
       runs-on: ubuntu-latest
       steps:
       - name: Checkout
@@ -80,7 +81,7 @@ jobs:
         with:
           terragrunt_version: 0.38.9
 
-      - name: Terragrunt Apply
+      - name: Terragrunt Destroy
         run: |
           cd environment/us-east-1/dev
           terragrunt run-all destroy --terragrunt-non-interactive
