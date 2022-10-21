@@ -26,25 +26,35 @@ jobs:
           terragrunt_version: 0.38.9
 
       - name: Interact with Terragrunt
-        uses: actions/upload-artifact@v2
         run: |
           terragrunt --version
           pwd
           cd environment/us-east-1/dev
           terragrunt run-all plan -out terragrunt_plan.out --terragrunt-include-external-dependencies
           ls
+          pwd
+      - name: upload artifact
+        uses: actions/upload-artifact@v2
         with:
           name: terragrunt_plan.out
           path: ./terragrunt_plan.out
-
-      - name: Terragrunt Apply
-        uses: actions/download-artifact@v2
-        with:
-          name: terragrunt_plan.out
-        run: |
-          terragrunt --version
+      - name: show file
+        run: 
           ls
           pwd
           cd environment/us-east-1/dev
           ls
-          terragrunt run-all apply terragrunt_plan.out --terragrunt-non-interactive
+
+
+
+      # - name: Terragrunt Apply
+      #   uses: actions/download-artifact@v2
+      #   with:
+      #     name: terragrunt_plan.out
+      #   run: |
+      #     terragrunt --version
+      #     ls
+      #     pwd
+      #     cd environment/us-east-1/dev
+      #     ls
+      #     terragrunt run-all apply terragrunt_plan.out --terragrunt-non-interactive
