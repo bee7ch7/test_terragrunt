@@ -3,7 +3,7 @@ name: Dev workflow
 on:
   push:
     branches:
-       - main
+       - main222
     # paths: 
     #    - 'environment/us-east-1/dev/**'
 # env:
